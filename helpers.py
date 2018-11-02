@@ -1,3 +1,4 @@
+import flickrapi
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
@@ -5,6 +6,7 @@ from keras.applications import VGG16
 from keras.preprocessing import image as img
 from keras_applications.vgg16 import preprocess_input
 from tensorflow.python.keras.applications.vgg16 import decode_predictions
+import os
 
 model = VGG16(weights='imagenet', include_top=True)
 model.summary()
@@ -35,4 +37,14 @@ print(pre_processed.shape)
 features = model.predict(pre_processed)
 print(features.shape)
 
-print(decode_predictions(features, top=10))
+import pprint
+
+pprint.pprint(decode_predictions(features, top=10))
+
+FLCIKR_KEY = os.environ['FLICKR_KEY']
+FLICKR_SECRET = os.environ['FLICKR_SECRET']
+
+flickr = flickrapi.FlickrAPI(FLCIKR_KEY, FLICKR_SECRET, format='parsed-json')
+results = flickr.photos.search(text='cat', per_page='10', sort='relevance')
+photos = results['photos']['photo']
+pprint.pprint(results)
